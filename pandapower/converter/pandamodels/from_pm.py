@@ -120,6 +120,8 @@ def pm_results_to_ppc_results_one_time_step(ppci, sol):
         if "w" in bus:
             # SOCWR model has only w instead of vm values
             ppci["bus"][bus_idx, VM] = bus["w"]
+        if "lam_kcl_r" in bus:
+            ppci["bus"][bus_idx, LAM_P] = bus["lam_kcl_r"] * -1
 
     for i, gen in sol["gen"].items():
         gen_idx = int(i) - 1
