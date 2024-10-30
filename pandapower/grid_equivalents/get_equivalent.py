@@ -270,7 +270,7 @@ def get_equivalent(net, eq_type, boundary_buses, internal_buses,
         if len(orig_slack_gens):
             net_eq.gen.loc[net_eq.gen.index.intersection(orig_slack_gens), "slack"] = True
         # run final power flow calculation
-        net_eq = runpp_fct(net_eq, calculate_voltage_angles=calculate_voltage_angles)
+        #net_eq = runpp_fct(net_eq, calculate_voltage_angles=calculate_voltage_angles)
     else:
         drop_assist_elms_by_creating_ext_net(net_eq)
         logger.debug("Only the equivalent net is returned.")

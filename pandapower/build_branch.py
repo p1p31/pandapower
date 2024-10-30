@@ -60,7 +60,7 @@ def _build_branch_ppc(net, ppc, update_vk_values: bool=True):
         branch_sc = np.empty(shape=(length, branch_cols_sc), dtype=np.float64)
         branch_sc.fill(np.nan)
         ppc["branch"] = np.hstack((ppc["branch"], branch_sc))
-    ppc["branch"][:, :13] = np.array([0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, -360, 360])
+    ppc["branch"][:, :13] = np.array([0, 0, 0, 0, 0, 250, 250, 250, 1, 0, 1, -30, 30])
     if "line" in lookup:
         _calc_line_parameter(net, ppc)
     if "trafo" in lookup:
@@ -348,8 +348,8 @@ def _calc_trafo_parameter(net, ppc, update_vk_values: bool=True):
     branch = ppc["branch"]
     trafo = net["trafo"]
     parallel = trafo["parallel"].values
-    branch[f:t, F_BUS] = bus_lookup[trafo["hv_bus"].values]
-    branch[f:t, T_BUS] = bus_lookup[trafo["lv_bus"].values]
+    branch[f:t, F_BUS] = bus_lookup[trafo["lv_bus"].values]
+    branch[f:t, T_BUS] = bus_lookup[trafo["hv_bus"].values]
     r, x, g, b, g_asym, b_asym, ratio, shift = _calc_branch_values_from_trafo_df(net, ppc, update_vk_values=update_vk_values)
     branch[f:t, BR_R] = r
     branch[f:t, BR_X] = x
@@ -752,6 +752,7 @@ def _calc_impedance_parameter(net, ppc):
     branch[f:t, F_BUS] = bus_lookup[net.impedance["from_bus"].values]
     branch[f:t, T_BUS] = bus_lookup[net.impedance["to_bus"].values]
     branch[f:t, BR_STATUS] = net["impedance"]["in_service"].values
+    branch[f:t, RATE_A] = net["impedance_rated_power"] if "impedance_rated_power" in net else 1500
 
 
 def _calc_tcsc_parameter(net, ppc):
