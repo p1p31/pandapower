@@ -65,6 +65,7 @@ def from_mpc(mpc_file, f_hz=50, casename_mpc_file='mpc', validate_conversion=Fal
     elif ending == ".m":
         ppc = _m2ppc(mpc_file, casename_mpc_file)
     net = from_ppc(ppc, f_hz=f_hz, validate_conversion=validate_conversion, **kwargs)
+    net['_ppc'] = ppc
     if "mpc_additional_data" in ppc:
         if "_options" not in net:
             net["_options"] = dict()
