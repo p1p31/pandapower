@@ -752,6 +752,7 @@ def _calc_impedance_parameter(net, ppc):
     branch[f:t, F_BUS] = bus_lookup[net.impedance["from_bus"].values]
     branch[f:t, T_BUS] = bus_lookup[net.impedance["to_bus"].values]
     branch[f:t, BR_STATUS] = net["impedance"]["in_service"].values
+    branch[f:t, RATE_A] = net["impedance_rated_power"] if "impedance_rated_power" in net else 1500
 
 
 def _calc_tcsc_parameter(net, ppc):
