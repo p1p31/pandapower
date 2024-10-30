@@ -348,8 +348,8 @@ def _calc_trafo_parameter(net, ppc, update_vk_values: bool=True):
     branch = ppc["branch"]
     trafo = net["trafo"]
     parallel = trafo["parallel"].values
-    branch[f:t, F_BUS] = bus_lookup[trafo["hv_bus"].values]
-    branch[f:t, T_BUS] = bus_lookup[trafo["lv_bus"].values]
+    branch[f:t, F_BUS] = bus_lookup[trafo["lv_bus"].values]
+    branch[f:t, T_BUS] = bus_lookup[trafo["hv_bus"].values]
     r, x, g, b, g_asym, b_asym, ratio, shift = _calc_branch_values_from_trafo_df(net, ppc, update_vk_values=update_vk_values)
     branch[f:t, BR_R] = r
     branch[f:t, BR_X] = x
