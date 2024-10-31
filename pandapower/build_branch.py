@@ -57,7 +57,7 @@ def _build_branch_ppc(net, ppc):
         branch_sc = np.empty(shape=(length, branch_cols_sc), dtype=np.complex128)
         branch_sc.fill(np.nan)
         ppc["branch"] = np.hstack((ppc["branch"], branch_sc))
-    ppc["branch"][:, :13] = np.array([0, 0, 0, 0, 0, 250, 250, 250, 1, 0, 1, -360, 360])
+    ppc["branch"][:, :13] = np.array([0, 0, 0, 0, 0, 250, 250, 250, 1, 0, 1, -30, 30])
     if "line" in lookup:
         _calc_line_parameter(net, ppc)
     if "trafo" in lookup:
