@@ -9,8 +9,6 @@ except ImportError:
     UnsupportedPythonError = Exception
 
 try:
-    from julia.api import Julia
-    Julia(compiled_modules=False)
     from julia import Main
     from julia import Pkg
     from julia import Base
@@ -101,4 +99,4 @@ def test_pandamodels_dev_mode():
 
 
 if __name__ == '__main__':
-    pytest.main([__file__, "-xs"])
+    pytest.main([__file__])

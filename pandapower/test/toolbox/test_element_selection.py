@@ -230,4 +230,5 @@ def test_count_elements():
 
 
 if __name__ == '__main__':
-    pytest.main([__file__, "-xs"])
+    # pytest.main([__file__, "-x"])
+    test_get_connected_buses_at_switches()

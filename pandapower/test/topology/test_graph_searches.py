@@ -286,5 +286,7 @@ def test_end_points_of_continuously_connected_lines():
     assert str(exception_info.value) == "Lines have branching points"
 
 
+
+
 if __name__ == '__main__':
-    pytest.main([__file__, "-xs"])
+    pytest.main([__file__])

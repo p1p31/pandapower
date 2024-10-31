@@ -13,7 +13,7 @@ except ImportError:
 logger = logging.getLogger(__name__)
 
 
-class MyTestControl(ConstController):
+class TestControl(ConstController):
 
     def __new__(cls):
         obj = super().__new__(cls)

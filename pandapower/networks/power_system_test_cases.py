@@ -8,9 +8,7 @@ import os
 
 import pandapower as pp
 import pandapower.toolbox
-from pandapower.file_io import from_json
-from pandapower.__init__ import pp_dir
-import pandapower.plotting.geo as geo
+from pandapower import pp_dir
 
 
 def _get_cases_path(filename=None):
@@ -62,7 +60,7 @@ def _change_ref_bus(net, ref_bus_idx, ext_grid_p=0):
 
 
 def sorted_from_json(path, **kwargs):
-    net = from_json(path, **kwargs)
+    net = pp.from_json(path, **kwargs)
     for elm in pandapower.toolbox.pp_elements():
         net[elm].sort_index(inplace=True)
     return net
@@ -138,8 +136,6 @@ def case9(**kwargs):
          net = pn.case9()
     """
     case9 = sorted_from_json(_get_cases_path("case9.json", **kwargs))
-    # TODO: add converted net to the json and remove this conversion step.
-    geo.convert_geodata_to_geojson(case9)
     return case9
 
 
@@ -225,8 +221,6 @@ def case30(**kwargs):
          net = pn.case30()
     """
     case30 = sorted_from_json(_get_cases_path("case30.json", **kwargs))
-    # TODO: add converted net to the json and remove this conversion step.
-    geo.convert_geodata_to_geojson(case30)
     return case30
 
 
@@ -289,8 +283,6 @@ def case39(**kwargs):
          net = pn.case39()
     """
     case39 = sorted_from_json(_get_cases_path("case39.json", **kwargs))
-    # TODO: add converted net to the json and remove this conversion step.
-    geo.convert_geodata_to_geojson(case39)
     return case39
 
 
@@ -376,8 +368,6 @@ def case118(**kwargs):
          net = pn.case118()
     """
     case118 = sorted_from_json(_get_cases_path("case118.json", **kwargs))
-    # TODO: add converted net to the json and remove this conversion step.
-    geo.convert_geodata_to_geojson(case118)
     return case118
 
 

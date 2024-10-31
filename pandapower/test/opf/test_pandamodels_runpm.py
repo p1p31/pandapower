@@ -29,8 +29,6 @@ try:
 except ImportError:
     UnsupportedPythonError = Exception
 try:
-    from julia.api import Julia
-    Julia(compiled_modules=False)
     from julia import Main
     julia_installed = True
 except (ImportError, RuntimeError, UnsupportedPythonError) as e:
@@ -773,4 +771,4 @@ def test_ac_opf_differnt_snmva():
 
 
 if __name__ == '__main__':
-    pytest.main([__file__, "-xs"])
+    pytest.main(['-x', __file__])

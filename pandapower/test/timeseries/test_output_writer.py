@@ -334,4 +334,4 @@ def cost_logging(result, n_columns=4):
 
 
 if __name__ == '__main__':
-    pytest.main([__file__, "-xs"])
+    pytest.main(['-s', __file__])

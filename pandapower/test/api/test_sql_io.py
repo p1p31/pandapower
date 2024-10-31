@@ -6,7 +6,6 @@
 import json
 import os
 import tempfile
-import copy
 
 import pandas as pd
 import pandas.testing as pdt
@@ -17,7 +16,6 @@ import time
 import pandapower as pp
 import pandapower.networks
 import pandapower.control
-from pandapower.plotting.geo import convert_geodata_to_geojson
 from pandapower import pp_dir
 from pandapower.auxiliary import _preserve_dtypes
 from pandapower.sql_io import download_sql_table
@@ -46,11 +44,11 @@ except ImportError:
 def net_in(request):
     method = pp.networks.__dict__[request.param]
     net = method()
-    # net.line.loc[0, "geo"] = '{"coordinates": [[1.1, 2.2], [3.3, 4.4]], "type": "LineString"}'
-    # net.line.loc[11, "geo"] = '{"coordinates": [[5.5, 5.5], [6.6, 6.6], [7.7, 7.7]], "type": "LineString"}'
-    # if len(net.trafo) > 0:
-    #     net.trafo.tap_side = "lv"
-    #     pp.control.DiscreteTapControl(net, net.trafo.index.values[0], 0.98, 1.02)
+    net.line_geodata.loc[0, "coords"] = [(1.1, 2.2), (3.3, 4.4)]
+    net.line_geodata.loc[11, "coords"] = [(5.5, 5.5), (6.6, 6.6), (7.7, 7.7)]
+    if len(net.trafo) > 0:
+        net.trafo.tap_side = "lv"
+        pp.control.DiscreteTapControl(net, net.trafo.index.values[0], 0.98, 1.02)
     return net
 
 
@@ -77,9 +75,7 @@ def postgresql_listening(**connect_data):
 
 
 def assert_postgresql_roundtrip(net_in, **kwargs):
-    net = copy.deepcopy(net_in)
-    if hasattr(net, "bus_geodata") or hasattr(net, "line_geodata"):
-        convert_geodata_to_geojson(net)
+    net = net_in.deepcopy()
     include_results = kwargs.pop("include_results", False)
     if not include_results:
         pp.reset_results(net)
@@ -99,7 +95,7 @@ def assert_postgresql_roundtrip(net_in, **kwargs):
     for element, table in net.items():
         # dictionaries (e.g. std_type) not included
         # json serialization/deserialization of objects not implemented
-        if not isinstance(table, pd.DataFrame) or table.empty:
+        if not isinstance(table, pd.DataFrame) or table.empty or "geodata" in element:
             continue
         # code below: very difficult to compare columns with NaN values due to None vs np.nan and dtypes,
         # "1" vs 1 and dtype object
@@ -160,4 +156,4 @@ def test_delete():
 
 
 if __name__ == "__main__":
-    pytest.main([__file__, "-xs"])
+    pytest.main([__file__, "-s"])

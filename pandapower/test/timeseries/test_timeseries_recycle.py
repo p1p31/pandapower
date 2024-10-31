@@ -375,4 +375,4 @@ def test_const_pq_out_of_service(simple_test_net, run_function):
 
 
 if __name__ == "__main__":
-    pytest.main([__file__, "-xs"])
+    pytest.main(['-s', __file__])

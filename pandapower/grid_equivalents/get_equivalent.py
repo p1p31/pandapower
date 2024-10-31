@@ -4,8 +4,8 @@ import time
 from copy import deepcopy
 from pandapower.grid_equivalents.auxiliary import drop_assist_elms_by_creating_ext_net, \
     drop_internal_branch_elements, add_ext_grids_to_boundaries, \
-    _ensure_unique_boundary_bus_names, match_cost_functions_and_eq_net, \
-    _check_network, _runpp_except_voltage_angles
+    _ensure_unique_boundary_bus_names, match_controller_and_new_elements, \
+    match_cost_functions_and_eq_net, _check_network, _runpp_except_voltage_angles
 from pandapower.grid_equivalents.rei_generation import _create_net_zpbn, \
     _get_internal_and_external_nets, _calculate_equivalent_Ybus, \
     _create_bus_lookups, _calclate_equivalent_element_params, \
@@ -207,7 +207,7 @@ def get_equivalent(net, eq_type, boundary_buses, internal_buses,
     elif eq_type in ["ward", "xward"]:
         net_internal, net_external = _get_internal_and_external_nets(
             net, boundary_buses, all_internal_buses, all_external_buses,
-            calc_volt_angles=calculate_voltage_angles, runpp_fct=runpp_fct)
+            calc_volt_angles=calculate_voltage_angles, runpp_fct=runpp_fct, **kwargs)
 
         # --- remove buses without power flow results in net_eq
         pp.drop_buses(net_external, net_external.res_bus.index[net_external.res_bus.vm_pu.isnull()])
@@ -270,11 +270,13 @@ def get_equivalent(net, eq_type, boundary_buses, internal_buses,
         if len(orig_slack_gens):
             net_eq.gen.loc[net_eq.gen.index.intersection(orig_slack_gens), "slack"] = True
         # run final power flow calculation
-        #net_eq = runpp_fct(net_eq, calculate_voltage_angles=calculate_voltage_angles)
+        #net_eq = runpp_fct(net_eq, calculate_voltage_angles=calculate_voltage_angles, **kwargs)
     else:
         drop_assist_elms_by_creating_ext_net(net_eq)
         logger.debug("Only the equivalent net is returned.")
 
+    # match the controller and the new elements
+    match_controller_and_new_elements(net_eq, net)
     # delete bus in poly_cost
     match_cost_functions_and_eq_net(net_eq, boundary_buses, eq_type)
 
@@ -509,6 +511,7 @@ def _determine_bus_groups(net, boundary_buses, internal_buses,
                 all_internal_buses |= buses
         all_internal_buses -= boundary_buses_inclusive_bswitch
 
+    
     # --- determine all external buses
     all_external_buses = set(net.bus.index) - unsupplied_buses - \
         all_internal_buses - boundary_buses_inclusive_bswitch
@@ -528,6 +531,7 @@ def _determine_bus_groups(net, boundary_buses, internal_buses,
             boundary_buses_inclusive_bswitch |= bbus_bswitch
             all_external_buses -= {bbus} | bbus_bswitch
 
+
     # --- function endings
     _check_bus_groups(all_internal_buses, all_external_buses, internal_buses,
                       boundary_buses)
@@ -535,6 +539,7 @@ def _determine_bus_groups(net, boundary_buses, internal_buses,
     if show_computing_time:
         logger.info("\"determine_bus_groups\" finished in %s seconds." %
                     round((t_end-t_start), 2))
+
 
     return sorted(all_internal_buses), sorted(all_external_buses), \
         sorted(boundary_buses_inclusive_bswitch), sorted(boundary_buses)
@@ -598,7 +603,6 @@ if __name__ == "__main__":
                             return_internal=return_internal,
                             show_computing_time=False,
                             calculate_voltage_angles=True)
-    print(net.res_bus)
     # print(net_eq.res_bus.loc[[0,3]])
     # print(net_eq.ward.loc[0])
 

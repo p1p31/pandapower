@@ -17,8 +17,6 @@ try:
 except ImportError:
     UnsupportedPythonError = Exception
 try:
-    from julia.api import Julia
-    Julia(compiled_modules=False)
     from julia import Main
 
     julia_installed = True
@@ -77,7 +75,7 @@ def test_case5_pm_pd2ppc():
     net["_options"]["mode"] = "opf"
     ppc = _pd2ppc(net)
     # check which one is the ref bus in ppc
-    ref_idx = int(ppc[0]["bus"][:, BUS_I][ppc[0]["bus"][:, BUS_TYPE] == REF].item())
+    ref_idx = int(ppc[0]["bus"][:, BUS_I][ppc[0]["bus"][:, BUS_TYPE] == REF])
     vmax = ppc[0]["bus"][ref_idx, VMAX]
     vmin = ppc[0]["bus"][ref_idx, VMIN]
 
@@ -87,7 +85,7 @@ def test_case5_pm_pd2ppc():
     # run pd2ppc with ext_grd controllable = True
     net.ext_grid["controllable"] = True
     ppc = _pd2ppc(net)
-    ref_idx = int(ppc[0]["bus"][:, BUS_I][ppc[0]["bus"][:, BUS_TYPE] == REF].item())
+    ref_idx = int(ppc[0]["bus"][:, BUS_I][ppc[0]["bus"][:, BUS_TYPE] == REF])
     vmax = ppc[0]["bus"][ref_idx, VMAX]
     vmin = ppc[0]["bus"][ref_idx, VMIN]
 
@@ -102,7 +100,7 @@ def test_case5_pm_pd2ppc():
     assert net.ext_grid["in_service"].values.dtype == bool
 
     ppc = _pd2ppc(net)
-    ref_idx = int(ppc[0]["bus"][:, BUS_I][ppc[0]["bus"][:, BUS_TYPE] == REF].item())
+    ref_idx = int(ppc[0]["bus"][:, BUS_I][ppc[0]["bus"][:, BUS_TYPE] == REF])
 
     vmax1 = ppc[0]["bus"][ref_idx, VMAX]
     vmin1 = ppc[0]["bus"][ref_idx, VMIN]
@@ -117,13 +115,13 @@ def test_opf_ext_grid_controllable():
     net_old = copy.deepcopy(net)
     net_new = copy.deepcopy(net)
     # run pd2ppc with ext_grid controllable = False
-    pp.runopp(net_old, delta=1e-12)
+    pp.runopp(net_old)
     net_new.ext_grid["controllable"] = True
-    pp.runopp(net_new, delta=1e-12)
+    pp.runopp(net_new)
     eg_bus = net.ext_grid.bus.at[0]
     assert np.isclose(net_old.res_bus.vm_pu[eg_bus], 1.06414000007302)
     assert np.isclose(net_new.res_bus.vm_pu[eg_bus], net_new.res_bus.vm_pu[eg_bus])
-    assert np.abs(net_new.res_cost - net_old.res_cost) / net_old.res_cost < 4.5e-3
+    assert np.abs(net_new.res_cost - net_old.res_cost) / net_old.res_cost < 4e-3
 
 
 # todo: it is unclear what is tested here, a fix and some additional comments are necessary
@@ -161,5 +159,9 @@ def test_opf_ext_grid_controllable_pm():
 
 
 if __name__ == "__main__":
-    pytest.main([__file__, "-xs"])
+    if 0:
+        pytest.main([__file__, "-xs"])
+    else:
+        test_case5_pm_pd2ppc()
+        test_opf_ext_grid_controllable_pm()
 
