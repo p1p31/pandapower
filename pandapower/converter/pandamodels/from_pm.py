@@ -11,7 +11,7 @@ from copy import deepcopy
 from pandapower.auxiliary import _clean_up
 from pandapower.converter import logger
 from pandapower.pypower.idx_brch import PF, PT, QF, QT, BR_STATUS
-from pandapower.pypower.idx_bus import VA, VM
+from pandapower.pypower.idx_bus import VA, VM, LAM_P
 from pandapower.pypower.idx_gen import PG, QG
 from pandapower.results import _extract_results, _copy_results_ppci_to_ppc
 from pandapower.optimal_powerflow import OPFNotConverged
